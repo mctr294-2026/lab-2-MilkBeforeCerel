@@ -57,9 +57,46 @@ bool regula_falsi(std::function<double(double)> f, double a, double b, double *r
             return true;
         }
 
-        if () {
-            
+        if (negativeFunction * midpointFunction > 0) {
+            b = midpoint;
+            positiveFunction = midpointFunction;
+        }
+
+        if (positiveFunction * midpointFunction > 0) {
+            a = midpoint;
+            negativeFunction = midpointFunction;
         }
     }
+    return false;
+}
+
+
+
+bool newton_raphson(std::function<double(double)> f, std::function<double(double)> g, double a, double b, double c,double *root) {
+
+    for (int i = 0; i < MAX_ITERS; ++i) {
+        double numFunction = f(c);
+        double denomFunction = g(c);
+        double rootGuess = 1 - f(c)/g(c);
+
+        if (denomFunction = 0) {
+            return false; 
+        }
+
+        if (std::abs(rootGuess - c) < TOL) {
+            if (rootGuess > a && rootGuess < b) {
+                *root = rootGuess;
+                return true;
+            }
+        } else {
+            // rootGuess += nextGuess(what is the change in rootGuess to nextGuess)
+
+        }
+    }
+    return false;
+}
+
+bool secant(std::function<double(double)> f, double a, double b, double c, double *root) {
+    
 }
 
