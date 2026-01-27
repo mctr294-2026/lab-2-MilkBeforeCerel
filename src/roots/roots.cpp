@@ -39,7 +39,6 @@ bool bisection(std::function<double(double)> f, double a, double b, double *root
 }
 
 
-
 bool regula_falsi(std::function<double(double)> f, double a, double b, double *root) {
     double negativeFunction = f(a);
     double positiveFunction = f(b);
@@ -57,7 +56,7 @@ bool regula_falsi(std::function<double(double)> f, double a, double b, double *r
             return true;
         }
 
-        if (negativeFunction * midpointFunction > 0) {
+        if (negativeFunction * midpointFunction < 0) {
             b = midpoint;
             positiveFunction = midpointFunction;
         }
@@ -78,25 +77,55 @@ bool newton_raphson(std::function<double(double)> f, std::function<double(double
         double numFunction = f(c);
         double denomFunction = g(c);
         double rootGuess = 1 - f(c)/g(c);
+        
+        if (std::abs(numFunction) == 0) {
+            *root = c;
+            return true;
+        }
 
-        if (denomFunction = 0) {
+        if (denomFunction == 0) {
             return false; 
         }
 
-        if (std::abs(rootGuess - c) < TOL) {
-            if (rootGuess > a && rootGuess < b) {
-                *root = rootGuess;
-                return true;
-            }
-        } else {
-            // rootGuess += nextGuess(what is the change in rootGuess to nextGuess)
-
+        if (rootGuess < a || rootGuess > b) {
+            return false;
         }
+
+        if (std::abs(rootGuess - c) < TOL) {
+            *root = rootGuess;
+            return true;
+        } 
+        c = rootGuess;
     }
     return false;
 }
 
+
 bool secant(std::function<double(double)> f, double a, double b, double c, double *root) {
-    
+
+    double initialGuess = c;
+    double previousGuess = 0;
+
+    for (int i = 0; i < MAX_ITERS; ++i) {
+        double numFunction = initialGuess - previousGuess;
+        double denomFunction = f(initialGuess)-f(previousGuess);
+        double rootGuess = initialGuess - f(initialGuess)*(numFunction/denomFunction);
+
+        if (denomFunction == 0) {
+            return false;
+        }
+
+        if (rootGuess < a || rootGuess > b) {
+            return false;
+        }
+
+        if (std::abs(rootGuess - initialGuess) < TOL) {
+            *root = rootGuess;
+            return true;
+        }
+        previousGuess = initialGuess;
+        initialGuess = rootGuess;
+    }    
+    return false;
 }
 
