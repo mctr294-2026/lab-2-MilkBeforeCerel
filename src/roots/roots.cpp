@@ -16,10 +16,10 @@ bool bisection(std::function<double(double)> f, double a, double b, double *root
 
     for (int i = 0; i < MAX_ITERS; ++i) {
 
-        double midpoint = (negativeFunction + positiveFunction)/2;
+        double midpoint = (a + b)/2;
         double midpointFunction = f(midpoint);
 
-        if (std::abs(midpointFunction) < TOL || std::abs(b-a) > TOL) {
+        if (std::abs(midpointFunction) < TOL || std::abs(b-a) < TOL) {
             *root = midpoint;
             return true;
         }
@@ -61,7 +61,7 @@ bool regula_falsi(std::function<double(double)> f, double a, double b, double *r
             positiveFunction = midpointFunction;
         }
 
-        if (positiveFunction * midpointFunction > 0) {
+        if (positiveFunction * midpointFunction < 0) {
             a = midpoint;
             negativeFunction = midpointFunction;
         }
@@ -76,7 +76,7 @@ bool newton_raphson(std::function<double(double)> f, std::function<double(double
     for (int i = 0; i < MAX_ITERS; ++i) {
         double numFunction = f(c);
         double denomFunction = g(c);
-        double rootGuess = 1 - f(c)/g(c);
+        double rootGuess = c - f(c)/g(c);
         
         if (std::abs(numFunction) == 0) {
             *root = c;
@@ -103,8 +103,8 @@ bool newton_raphson(std::function<double(double)> f, std::function<double(double
 
 bool secant(std::function<double(double)> f, double a, double b, double c, double *root) {
 
+    double previousGuess = b;
     double initialGuess = c;
-    double previousGuess = 0;
 
     for (int i = 0; i < MAX_ITERS; ++i) {
         double numFunction = initialGuess - previousGuess;
